@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.dicewareservice.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,9 +9,12 @@ import javax.annotation.PostConstruct;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
@@ -33,20 +37,32 @@ public class Passphrase {
   @Column(name = "passphrase_id", updatable = false, nullable = false)
   private Long id;
 
+  @JsonIgnore
+  @NonNull
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "user_id", nullable = false, updatable = false)
+  private User user;
   @NonNull
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
   private Date created;
-
   @NonNull
   @Column(name = "passkey", nullable = false, length = 20, unique = true)
   @Pattern(regexp = "^\\D.*")
   private String key;
-
   @OneToMany(mappedBy = "passphrase", cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderBy("word_id ASC")
   private List<Word> words = new ArrayList<>();
+
+  @NonNull
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(@NonNull User user) {
+    this.user = user;
+  }
 
   public Long getId() {
     return id;

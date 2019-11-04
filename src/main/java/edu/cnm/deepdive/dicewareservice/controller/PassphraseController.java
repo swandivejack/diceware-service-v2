@@ -87,6 +87,7 @@ public class PassphraseController {
       passphrase.getWords().forEach((word) -> word.setPassphrase(existing));
       existing.getWords().addAll(passphrase.getWords());
     }
+
     // TODO Re-generate random passphrase, if requested.
     return passphraseRepository.save(existing);
   }
